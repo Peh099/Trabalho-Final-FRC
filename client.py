@@ -8,27 +8,40 @@ import tkinter.scrolledtext
 from tkinter import simpledialog
 from tkinter import messagebox
 
+import PySimpleGUI as sg
+
+sg.theme('SandyBeach')  
+
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9001
+PORT = 9000
 
+def rgb_hack(rgb):
+    return "#%02x%02x%02x" % rgb
 
 class Client:
 
     def __init__(self, host, port):
         self.socket = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM) # cria socket
-        
+        socket.AF_INET, socket.SOCK_STREAM) # cria socket
         self.socket.connect((host, port))       # conecta ao host
 
-        msg = tkinter.Tk()
-        msg.withdraw()
+        layout = [
+        [sg.Text('Digite seu nome:', size =(15, 1),font=(40,12), pad=(20,30)), sg.InputText(size =(25),font=(40,12))],
+        [sg.Text('Digite a sua sala:', size =(15, 1),font=(40,12), pad=(20,30)), sg.InputText(size =(25),font=(40,12))],
+        [sg.Submit('Confirmar',size =(15, 1),font=(50),pad=(15,40)), sg.Cancel('Cancelar',size =(50, 1),font=(50),pad=(15,40))]
+        ]
 
-        self.nome = simpledialog.askstring(
-            "Nome", "Digite seu nome:")         # pergunta nome
+        title='Seja Bem-Vindo !'
+        window = sg.Window(title, layout, size=(420,300))
+        event, values = window.read()
+        window.close()
 
-        self.sala = simpledialog.askstring(
-            "Sala", "Escolha sua sala:")        # pergunta nome da sala
+        #print(event, values[0], values[1]) 
+        
+        self.nome = values [0]
+
+        self.sala = values [1]     # pergunta nome da sala
         
         # self.sala = simpledialog.askstring(
         #     "sala", "Escolha seu grupo:")
@@ -46,14 +59,15 @@ class Client:
 
     def front(self): # front-end
         # janela
+
         self.win = tkinter.Tk()
-        self.win.configure(bg="lightblue")
+        self.win.configure(bg=rgb_hack((240, 227, 159)))
         self.win.title("Bate Papo")
-        self.win.geometry("400x400")
+        self.win.geometry("600x400")
 
         # input
         self.chat_label = tkinter.Label(
-            self.win, text=self.sala, bg='lightblue')
+            self.win, text=self.sala, bg=rgb_hack((240, 227, 159)))
         self.chat_label.configure(font=("Courier", 12))
         self.chat_label.pack(padx=20, pady=5)
 
@@ -64,7 +78,7 @@ class Client:
 
         # label 
         self.input_label = tkinter.Label(
-            self.win, text="Mensagem", bg='lightblue')
+            self.win, text="Mensagem", bg=rgb_hack((240, 227, 159)))
         self.input_label.pack(padx=20, pady=5)
 
         # texto de entrada
