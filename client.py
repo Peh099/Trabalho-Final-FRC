@@ -27,13 +27,13 @@ class Client:
         self.socket.connect((host, port))       # conecta ao host
 
         layout = [
-        [sg.Text('Digite seu nome:', size =(15, 1),font=(40,12), pad=(20,30)), sg.InputText(size =(25),font=(40,12))],
-        [sg.Text('Digite a sua sala:', size =(15, 1),font=(40,12), pad=(20,30)), sg.InputText(size =(25),font=(40,12))],
-        [sg.Submit('Confirmar',size =(15, 1),font=(50),pad=(15,40)), sg.Cancel('Cancelar',size =(50, 1),font=(50),pad=(15,40))]
+        [sg.Text('Digite seu nome:', size =(15, 1),font=(50), pad=(15,15)), sg.InputText(size =(20),font=(50))],
+        [sg.Text('Digite a sua sala:', size =(15, 1),font=(50), pad=(15,15)), sg.InputText(size =(20),font=(50))],
+        [sg.Submit('Confirmar',size =(15, 1),font=(50),pad=(15,20)), sg.Cancel('Cancelar',size =(15, 1),font=(50),pad=(15,20))]
         ]
 
-        title='Seja Bem-Vindo !'
-        window = sg.Window(title, layout, size=(420,300))
+        title='Seja Bem-Vindo!'
+        window = sg.Window(title, layout,size=(400,220))
         event, values = window.read()
         window.close()
 
@@ -61,13 +61,13 @@ class Client:
         # janela
 
         self.win = tkinter.Tk()
-        self.win.configure(bg=rgb_hack((240, 227, 159)))
+        self.win.configure(bg=rgb_hack((178, 50, 126)))
         self.win.title("Bate Papo")
         self.win.geometry("600x400")
 
         # input
         self.chat_label = tkinter.Label(
-            self.win, text=self.sala, bg=rgb_hack((240, 227, 159)))
+        self.win, text=self.sala, bg=rgb_hack((178, 50, 126)))
         self.chat_label.configure(font=("Courier", 12))
         self.chat_label.pack(padx=20, pady=5)
 
@@ -78,7 +78,7 @@ class Client:
 
         # label 
         self.input_label = tkinter.Label(
-            self.win, text="Mensagem", bg=rgb_hack((240, 227, 159)))
+            self.win, text="Mensagem", bg=rgb_hack((178, 50, 126)))
         self.input_label.pack(padx=20, pady=5)
 
         # texto de entrada
