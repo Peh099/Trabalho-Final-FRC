@@ -14,7 +14,7 @@ sg.theme('SandyBeach')
 
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9003
+PORT = 9002
 
 def rgb_hack(rgb):
     return "#%02x%02x%02x" % rgb
@@ -82,13 +82,24 @@ class Client:
         self.win.configure(bg=rgb_hack((178, 50, 126)))
         self.win.title("Bate Papo")
         self.win.option_add('*Font', '22')
-        self.win.geometry("600x400")
+        self.win.geometry("800x600")
 
         # input
         self.chat_label = tkinter.Label(
-        self.win, text='Nome da sala: '+self.sala, bg=rgb_hack((178, 50, 126)),height=2)
+        self.win, text=self.sala, bg=rgb_hack((178, 50, 126)),height=2)
         self.chat_label.configure(font=("Arial", 15))
-        self.chat_label.pack(padx=20, pady=5)
+        self.chat_label.pack(padx=20, pady=3)
+
+        # label
+        self.chat_members = tkinter.Label(
+        self.win, text="Membros:", bg=rgb_hack((178, 50, 126)),height=2)
+        self.chat_members.configure(font=("Arial", 15))
+        self.chat_members.pack(padx=20, pady=0)
+
+        #text box
+        self.chat_text_members = tkinter.scrolledtext.ScrolledText(
+            self.win, width=40, height=5)
+        self.chat_text_members.pack(padx=20, pady=3)
 
         # text box
         self.chat_text = tkinter.scrolledtext.ScrolledText(
@@ -132,7 +143,7 @@ class Client:
 
 
     def receive(self):
-
+        listaDeMembros=[]
 
         while self.running:
             all_sockets=[sys.stdin,self.socket]
@@ -146,15 +157,26 @@ class Client:
                         elif mensagem == 'GROUP':
                             self.socket.send(self.sala.encode('utf-8'))   # envia nome da sala
                         elif mensagem == 'salaMAX':
+                            print("A sala está lotada. Tente outra.")
+                            self.running= False
                             self.win.destroy()
-                            #self.mensagem["text"] = "O botão recebeu um clique"
+                            exit(0)
+
                         else:
                             if self.front_done:
+                                membro=mensagem.split()
+                                if membro[0][:-1] not in listaDeMembros and mensagem.find(":")!=-1: 
+                                    listaDeMembros.append(membro[0][:-1])
+                                    self.chat_text_members.config(state='normal')
+                                    self.chat_text_members.insert('end', membro[0][:-1] + '\n')
+                                    self.chat_text_members.yview('end')
+                                    self.chat_text_members.config(state='disabled')
                                 # adiciona mensagem ao chat
                                 self.chat_text.config(state='normal')
                                 self.chat_text.insert('end', mensagem + '\n')
                                 self.chat_text.yview('end')
                                 self.chat_text.config(state='disabled')
+                            
                     except ConnectionAbortedError():
                         break
                     except:

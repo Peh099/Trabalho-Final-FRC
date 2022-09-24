@@ -3,9 +3,11 @@ import socket
 import threading
 import select
 
+from numpy import False_
+
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9003
+PORT = 9002
 
 # conexão socket
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    # criar socket
@@ -20,8 +22,7 @@ salas = []
 paresCliGru = []
 paresGruTam = []
 all_sockets=[]
-paresNamesGru = []
-
+paresNomesSala = []
 
 def receive():
     all_sockets.append(servidor)
@@ -29,12 +30,17 @@ def receive():
         readable_sock,writable_sock,error_sock=select.select(all_sockets,[],[],0)
         
         for all_socks in readable_sock:
+            confirmacao=0
             print('Clientes:')
             print(nomes)
             print('Salas:')
             print(salas)
-            print('Pares:')
-            print(paresCliGru)
+            for sala in salas:
+                print(f'Integrantes da sala {sala}:')
+                print(f'\t Nomes:')
+                for par in paresNomesSala:
+                    if par[0]==sala: 
+                        print(f'\t\t{par[1]}')
 
             if all_socks==servidor:
                 sockdd, adress = servidor.accept() # aceita conexão e recebe endereços
@@ -43,8 +49,6 @@ def receive():
                 sockdd.send("NICK".encode('utf-8'))
                 nome = sockdd.recv(1024).decode('utf-8') # recebe o nome do integrante da sala
                 print(f'Apelido: {nome}')
-                nomes.append(nome)
-                clientes.append(sockdd)
 
                 sockdd.send("GROUP".encode('utf-8'))
                 sala = sockdd.recv(1024).decode('utf-8') # recebe o nome da sala
@@ -52,13 +56,14 @@ def receive():
 
                 for par in paresGruTam:
                         if par[0] == sala and par[1] > 1:
-                            print(par[1])
                             sockdd.send("salaMAX".encode('utf-8'))
-                            salaMax = sockdd.recv(1024).decode('utf-8')
-                            print(salaMax)
-                            continue
-                        if par[0] == sala and par[1] < 2:
-                            validatesala = False
+                            confirmacao=1
+                            break
+                if confirmacao==1:
+                    continue
+                nomes.append(nome)
+                clientes.append(sockdd)
+                paresNomesSala.append((sala,nome))
 
                 print(f'Sala: {sala}')
                 if sala not in salas:
@@ -68,6 +73,7 @@ def receive():
                     paresCliGru.append((sockdd, sala)) # adiciona par sockdde/sala a lista de pares
                 
                 check = True   
+
                 for par in paresGruTam:
                     if par[0] == sala:
                        check = False
@@ -75,10 +81,9 @@ def receive():
                        paresGruTam.remove(par)
                        paresGruTam.append((sala, i))
 
+
                 if check:
                     paresGruTam.append((sala, 1))
-
-                print(paresGruTam)
 
                 global salaAtual  
                 salaAtual = sala

@@ -9,7 +9,9 @@
 
 ## Preparar o ambiente:
 
+```
 python3 -m pip install PySimpleGUI
+```
 
 ## Como rodar:
 
