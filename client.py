@@ -3,7 +3,7 @@ import threading
 import select
 import sys
 # se não tiver o tkinter, instale-o com o comando: sudo apt install python3-tk
-import tkinter
+from tkinter import *
 import tkinter.scrolledtext
 from tkinter import simpledialog
 from tkinter import messagebox
@@ -14,7 +14,7 @@ sg.theme('SandyBeach')
 
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9000
+PORT = 9003
 
 def rgb_hack(rgb):
     return "#%02x%02x%02x" % rgb
@@ -48,6 +48,9 @@ class Client:
 
         # self.salaMax = messagebox.showerror("ERROR!!", "Esse grupo está cheio")
 
+        self.mensagem = Label(text="")
+        self.mensagem.pack()
+
         self.front_done = False
         self.running = True
 
@@ -57,18 +60,34 @@ class Client:
         front_thread.start()
         receive_thread.start()
 
+    def createWidgets(self):
+        self.QUIT = Button(self)
+        self.QUIT["text"] = "QUIT"
+        self.QUIT["fg"]   = "red"
+        self.QUIT["command"] =  self.quit
+
+        self.QUIT.pack({"side": "left"})
+
+        self.hi_there = Button(self)
+        self.hi_there["text"] = "Hello",
+        self.hi_there["command"] = self.say_hi
+
+        self.hi_there.pack({"side": "left"})
+
+
     def front(self): # front-end
         # janela
 
         self.win = tkinter.Tk()
         self.win.configure(bg=rgb_hack((178, 50, 126)))
         self.win.title("Bate Papo")
+        self.win.option_add('*Font', '22')
         self.win.geometry("600x400")
 
         # input
         self.chat_label = tkinter.Label(
-        self.win, text=self.sala, bg=rgb_hack((178, 50, 126)))
-        self.chat_label.configure(font=("Courier", 12))
+        self.win, text='Nome da sala: '+self.sala, bg=rgb_hack((178, 50, 126)),height=2)
+        self.chat_label.configure(font=("Arial", 15))
         self.chat_label.pack(padx=20, pady=5)
 
         # text box
@@ -113,6 +132,8 @@ class Client:
 
 
     def receive(self):
+
+
         while self.running:
             all_sockets=[sys.stdin,self.socket]
             readable,writable,error_s=select.select(all_sockets,[],[])
@@ -124,8 +145,9 @@ class Client:
                             self.socket.send(self.nome.encode('utf-8'))  # envia nome
                         elif mensagem == 'GROUP':
                             self.socket.send(self.sala.encode('utf-8'))   # envia nome da sala
-                        elif mensagem == 'GROUPMAX':
-                            self.socket.send("GRUPO CHEIO".encode('utf-8'))
+                        elif mensagem == 'salaMAX':
+                            self.win.destroy()
+                            #self.mensagem["text"] = "O botão recebeu um clique"
                         else:
                             if self.front_done:
                                 # adiciona mensagem ao chat

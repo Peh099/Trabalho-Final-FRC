@@ -5,7 +5,7 @@ import select
 
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9000
+PORT = 9003
 
 # conexão socket
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    # criar socket
@@ -48,15 +48,17 @@ def receive():
 
                 sockdd.send("GROUP".encode('utf-8'))
                 sala = sockdd.recv(1024).decode('utf-8') # recebe o nome da sala
+                sala = 'Nome da sala' + sala
 
-                # for par in paresGruTam:
-                #         if par[0] == sala and par[1] == 2:
-                #             print(par[1])
-                #             sockdd.send("salaMAX".encode('utf-8'))
-                #             salaMax = sockdd.recv(1024).decode('utf-8')
-                #             print(salaMax)
-                #         if par[0] == sala and par[1] < 2:
-                #             validatesala = False
+                for par in paresGruTam:
+                        if par[0] == sala and par[1] > 1:
+                            print(par[1])
+                            sockdd.send("salaMAX".encode('utf-8'))
+                            salaMax = sockdd.recv(1024).decode('utf-8')
+                            print(salaMax)
+                            continue
+                        if par[0] == sala and par[1] < 2:
+                            validatesala = False
 
                 print(f'Sala: {sala}')
                 if sala not in salas:
@@ -65,16 +67,18 @@ def receive():
                 if (sockdd, sala) not in paresCliGru:
                     paresCliGru.append((sockdd, sala)) # adiciona par sockdde/sala a lista de pares
                 
-                # check = True   
-                # for par in paresGruTam:
-                #     if par[0] == sala:
-                #         check = False
-                #         i = par[1] + 1
-                #         paresGruTam.remove(par)
-                #         paresGruTam.append((sala, i))
+                check = True   
+                for par in paresGruTam:
+                    if par[0] == sala:
+                       check = False
+                       i = par[1] + 1
+                       paresGruTam.remove(par)
+                       paresGruTam.append((sala, i))
 
-                # if check:
-                #     paresGruTam.append((sala, 1))
+                if check:
+                    paresGruTam.append((sala, 1))
+
+                print(paresGruTam)
 
                 global salaAtual  
                 salaAtual = sala
