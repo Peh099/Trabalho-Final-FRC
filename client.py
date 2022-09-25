@@ -14,7 +14,7 @@ sg.theme('SandyBeach')
 
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9002
+PORT = 9005
 
 def rgb_hack(rgb):
     return "#%02x%02x%02x" % rgb
@@ -59,20 +59,6 @@ class Client:
         receive_thread = threading.Thread(target=self.receive)
         front_thread.start()
         receive_thread.start()
-
-    def createWidgets(self):
-        self.QUIT = Button(self)
-        self.QUIT["text"] = "QUIT"
-        self.QUIT["fg"]   = "red"
-        self.QUIT["command"] =  self.quit
-
-        self.QUIT.pack({"side": "left"})
-
-        self.hi_there = Button(self)
-        self.hi_there["text"] = "Hello",
-        self.hi_there["command"] = self.say_hi
-
-        self.hi_there.pack({"side": "left"})
 
 
     def front(self): # front-end
@@ -130,7 +116,7 @@ class Client:
     def entrada(self):
         mensagem = f"{self.nome}: {self.input_text.get()}"   # msg do input
         
-        self.socket.send(mensagem.encode('utf-8'))           # envia msg
+        self.socket.send(mensagem.encode('utf-9'))           # envia msg
        
         self.input_text.delete(first=0, last='end')         # limpar input
 
@@ -151,7 +137,7 @@ class Client:
             for each_sock in readable:
                 if each_sock==self.socket:
                     try:
-                        mensagem = each_sock.recv(1024).decode('utf-8')
+                        mensagem = each_sock.recv(4096).decode('utf-8')
                         if mensagem == 'NICK':
                             self.socket.send(self.nome.encode('utf-8'))  # envia nome
                         elif mensagem == 'GROUP':
