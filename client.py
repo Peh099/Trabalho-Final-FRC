@@ -14,7 +14,7 @@ sg.theme('SandyBeach')
 
 # ip host e porta
 HOST = '127.0.0.1'
-PORT = 9005
+PORT = 9001
 
 def rgb_hack(rgb):
     return "#%02x%02x%02x" % rgb
@@ -54,11 +54,25 @@ class Client:
         self.front_done = False
         self.running = True
 
-        # thread que recebe mensagens
+        # thread que recebe mensagens no front
         front_thread = threading.Thread(target=self.front)
-        receive_thread = threading.Thread(target=self.receive)
         front_thread.start()
-        receive_thread.start()
+        
+        self.receive() # função que recebe as mensagens
+
+    def createWidgets(self):
+        self.QUIT = Button(self)
+        self.QUIT["text"] = "QUIT"
+        self.QUIT["fg"]   = "red"
+        self.QUIT["command"] =  self.quit
+
+        self.QUIT.pack({"side": "left"})
+
+        self.hi_there = Button(self)
+        self.hi_there["text"] = "Hello",
+        self.hi_there["command"] = self.say_hi
+
+        self.hi_there.pack({"side": "left"})
 
 
     def front(self): # front-end
@@ -72,7 +86,7 @@ class Client:
 
         # input
         self.chat_label = tkinter.Label(
-        self.win, text=self.sala, bg=rgb_hack((178, 50, 126)),height=2)
+        self.win, text='Nome da sala: '+self.sala, bg=rgb_hack((178, 50, 126)),height=2)
         self.chat_label.configure(font=("Arial", 15))
         self.chat_label.pack(padx=20, pady=3)
 
@@ -116,7 +130,7 @@ class Client:
     def entrada(self):
         mensagem = f"{self.nome}: {self.input_text.get()}"   # msg do input
         
-        self.socket.send(mensagem.encode('utf-9'))           # envia msg
+        self.socket.send(mensagem.encode('utf-8'))           # envia msg
        
         self.input_text.delete(first=0, last='end')         # limpar input
 
@@ -125,19 +139,18 @@ class Client:
         self.win.destroy()      # fecha janela
        # send...
         self.socket.close()     # fecha socket
-        exit(0)
+        sys.exit()
 
 
     def receive(self):
         listaDeMembros=[]
-
         while self.running:
             all_sockets=[sys.stdin,self.socket]
             readable,writable,error_s=select.select(all_sockets,[],[])
             for each_sock in readable:
                 if each_sock==self.socket:
                     try:
-                        mensagem = each_sock.recv(4096).decode('utf-8')
+                        mensagem = each_sock.recv(1024).decode('utf-8')
                         if mensagem == 'NICK':
                             self.socket.send(self.nome.encode('utf-8'))  # envia nome
                         elif mensagem == 'GROUP':
@@ -146,7 +159,7 @@ class Client:
                             print("A sala está lotada. Tente outra.")
                             self.running= False
                             self.win.destroy()
-                            exit(0)
+                            sys.exit(0)
 
                         else:
                             if self.front_done:
@@ -164,6 +177,7 @@ class Client:
                                 self.chat_text.config(state='disabled')
                             
                     except ConnectionAbortedError():
+                        sys.exit()
                         break
                     except:
                         print("Error")
