@@ -166,4 +166,8 @@ class Cliente:
 def inicia(): 
     client = Cliente(HOST, PORT)
 
+<<<<<<< HEAD
 inicia() # inicia cliente
+=======
+inicia() # inicia cliente
+>>>>>>> 326113f542d19d3ec03024b1bf17100bb07ea421

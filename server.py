@@ -130,4 +130,8 @@ def enviaMensagens(sock, msg): # envia mensagem para todos clientes da sala atua
                     all_sockets.remove(socketA)
 
 
+<<<<<<< HEAD
 receber()# inicia servidor
+=======
+receber()# inicia servidor
+>>>>>>> 326113f542d19d3ec03024b1bf17100bb07ea421
