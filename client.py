@@ -6,6 +6,7 @@ from tkinter import *
 import tkinter.scrolledtext
 from tkinter import simpledialog
 from tkinter import messagebox
+import time
 
 import PySimpleGUI as sg
 
@@ -134,6 +135,7 @@ class Cliente:
                             self.socket.send(self.sala.encode('utf-8'))   
                         elif mensagem == 'salaMAX': # se a sala tiver cheia fecha janela
                             print("A sala está lotada. Tente outra.")
+                            time.sleep(0.3)
                             self.running= False
                             self.win.destroy()
                             self.socket.close()  
