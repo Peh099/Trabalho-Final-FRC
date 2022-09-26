@@ -155,6 +155,7 @@ class Cliente:
                                 self.chat_text.insert('end', mensagem + '\n')
                                 self.chat_text.yview('end')
                                 self.chat_text.config(state='disabled')
+                                
                     except ConnectionAbortedError():
                         break
                     except:
@@ -163,11 +164,8 @@ class Cliente:
                         break
 
 
+
 def inicia(): 
     client = Cliente(HOST, PORT)
 
-<<<<<<< HEAD
 inicia() # inicia cliente
-=======
-inicia() # inicia cliente
->>>>>>> 326113f542d19d3ec03024b1bf17100bb07ea421
